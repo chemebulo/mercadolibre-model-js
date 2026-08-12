@@ -4,6 +4,7 @@ import { DraftNewUser, DraftProduct } from "./draft.js";
 import IdGenerator from "./IdGenerator.js";
 import { Cart, Category, Payment, Product, User } from "./model.js";
 import { getPage, Page } from "./page.js";
+import { CategoryException, ProductException, PurchaseException, QuestionException, UserException } from './exception.js';
 
 class MercadoLibreService {
   products: Product[] = [];
@@ -20,7 +21,7 @@ class MercadoLibreService {
     */
   registerNewUser(draftNewUser: DraftNewUser): User {
     if (this.users.some(user => user.email === draftNewUser.email)) {
-      throw new Error("The email is already registered.");
+      throw new UserException("The email is already registered.");
     }
     const user: User = {
       id: this.IdGenerator.getNextUserId(),
@@ -47,7 +48,7 @@ class MercadoLibreService {
   login(email: string, password: string): User {
     const user = this.users.find(user => user.email === email && user.password === password);
     if (!user) {
-      throw new Error("Not found");
+      throw new UserException("Not found");
     }
     return user;
   }
@@ -61,7 +62,7 @@ class MercadoLibreService {
   getUser(id: string): User {
     const user = this.users.find(user => user.id === id);
     if (!user) {
-      throw new Error("Not found");
+      throw new UserException("Not found");
     }
     return user;
   }
@@ -93,7 +94,7 @@ class MercadoLibreService {
    */
   addCategory(name: string): Category {
     if (this.categories.some(category => category.name === name)) {
-      throw new Error("The category already exists.");
+      throw new CategoryException("The category already exists.");
     }
     const category: Category = {
       id: this.IdGenerator.getNextCategoryId(),
@@ -120,7 +121,7 @@ class MercadoLibreService {
   getCategory(id: string): Category {
     const category = this.categories.find(category => category.id === id);
     if (!category) {
-      throw new Error("Not found");
+      throw new CategoryException("Not found");
     }
     return category;
   }
@@ -166,7 +167,7 @@ class MercadoLibreService {
   editProduct(userId: string, productId: string, draftProduct: DraftProduct): Product {
     const user = this.getUser(userId);
     const product = this.getProduct(productId);
-    if (product.owner.id != user.id) throw new Error("Not allowed.");
+    if (product.owner.id != user.id) throw new ProductException("Not allowed.");
     product.title = draftProduct.title;
     product.description = draftProduct.description;
     product.images = draftProduct.images
@@ -186,7 +187,7 @@ class MercadoLibreService {
   getProduct(id: string): Product {
     const product = this.products.find(product => product.id === id);
     if (!product) {
-      throw new Error("Not found");
+      throw new ProductException("Not found");
     }
     return product;
   }
@@ -314,7 +315,7 @@ class MercadoLibreService {
   purchase(idUser: string, payment: Payment) {
     const user = this.getUser(idUser);
     const cart = this.getCart(idUser);
-    if (cart.items.length === 0) throw Error("Cart is empty");
+    if (cart.items.length === 0) throw new PurchaseException("Cart is empty");
     if (cart.items.every(it => it.product.stock >= it.amount)) {
       cart.items.forEach(it => {
         it.product.stock -= it.amount;
@@ -333,7 +334,7 @@ class MercadoLibreService {
       })
       this.carts = this.carts.filter(c => c !== cart);
     } else {
-      throw Error("Unable to complete the purchase because one or more items are out of stock.")
+      throw new PurchaseException("Unable to complete the purchase because one or more items are out of stock.")
     }
   }
 
@@ -350,7 +351,7 @@ class MercadoLibreService {
   addQuestion(idUser: string, idProduct: string, question: string): Product {
     const user = this.getUser(idUser);
     const product = this.getProduct(idProduct);
-    if (product.owner.id == idUser) throw new Error("Not allowed.");
+    if (product.owner.id == idUser) throw new QuestionException("Not allowed.");
     product.questions.push({
       id: this.IdGenerator.getNextQuestionId(),
       product,
@@ -374,9 +375,9 @@ class MercadoLibreService {
   addAnswer(idUser: string, idProduct: string, idQuestion: string, text: string): Product {
     const user = this.getUser(idUser)
     const product = this.getProduct(idProduct)
-    if (product.owner.id != user.id) throw new Error("Not allowed.")
+    if (product.owner.id != user.id) throw new QuestionException("Not allowed.")
     const question = product.questions.find(it => it.id == idQuestion)
-    if (!question) throw new Error("Not found question")
+    if (!question) throw new QuestionException("Not found")
     question.response = text
     return product
   }

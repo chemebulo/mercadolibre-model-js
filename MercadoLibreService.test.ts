@@ -4,6 +4,7 @@ import { DraftNewUser, DraftProduct } from './draft.js';
 import MercadoLibreService from './MercadoLibreService.js';
 import { Category, Characteristic, Payment, Shipping } from './model.js';
 import initSystem from './InitSystem.js';
+import { CategoryException, ProductException, PurchaseException, QuestionException, UserException } from './exception.js';
 
 const getDraftNewUser = (name: string): DraftNewUser => {
   return {
@@ -46,7 +47,7 @@ describe('MercadoLibreServiceTest', () => {
 
     expect(() => {
       mercadoLibreService.registerNewUser(getDraftNewUser("example"));
-    }).toThrow(Error);
+    }).toThrow(UserException);
   });
 
   test('getUserTest', () => {
@@ -61,7 +62,7 @@ describe('MercadoLibreServiceTest', () => {
     mercadoLibreService.registerNewUser(getDraftNewUser("example"));
     expect(() => {
       mercadoLibreService.login("example1@example.com", "password_example");
-    }).toThrow(Error);
+    }).toThrow(UserException);
   });
 
   test('getUserWithWrongPasswordTest', () => {
@@ -69,7 +70,7 @@ describe('MercadoLibreServiceTest', () => {
     mercadoLibreService.registerNewUser(getDraftNewUser("example"));
     expect(() => {
       mercadoLibreService.login("example@example.com", "password_example1");
-    }).toThrow(Error);
+    }).toThrow(UserException);
   });
 
   test('getUserByIdTest', () => {
@@ -83,7 +84,7 @@ describe('MercadoLibreServiceTest', () => {
     const mercadoLibreService = new MercadoLibreService();
     expect(() => {
       mercadoLibreService.getUser("u_1");
-    }).toThrow(Error);
+    }).toThrow(UserException);
   });
 
   test('toggleLikeTest', () => {
@@ -113,7 +114,7 @@ describe('MercadoLibreServiceTest', () => {
     expect(mercadoLibreService.categories.length).toBe(1);
     expect(() => {
       mercadoLibreService.addCategory("cat1");
-    }).toThrow(Error);
+    }).toThrow(CategoryException);
   });
 
   test('getAllCategoriesTest', () => {
@@ -133,7 +134,7 @@ describe('MercadoLibreServiceTest', () => {
     const mercadoLibreService = new MercadoLibreService();
     expect(() => {
       mercadoLibreService.getCategory("c_1");
-    }).toThrow(Error);
+    }).toThrow(CategoryException);
   });
 
   test('addProductTest', () => {
@@ -171,7 +172,7 @@ describe('MercadoLibreServiceTest', () => {
     expect(mercadoLibreService.products.length).toBe(1);
     expect(() => {
       mercadoLibreService.editProduct(anotherUser.id, product.id, getDraftProduct("product2"));
-    }).toThrow(Error);
+    }).toThrow(ProductException);
   });
 
   test('getProductTest', () => {
@@ -186,7 +187,7 @@ describe('MercadoLibreServiceTest', () => {
     const mercadoLibreService = new MercadoLibreService();
     expect(() => {
       mercadoLibreService.getProduct("p_1");
-    }).toThrow(Error);
+    }).toThrow(ProductException);
   });
 
   test('getProductsByUserTest', () => {
@@ -330,7 +331,7 @@ describe('MercadoLibreServiceTest', () => {
     const buyer = mercadoLibreService.registerNewUser(getDraftNewUser("user"));
     expect(() => {
       mercadoLibreService.purchase(buyer.id, { cardNumber: "3333", expirationDate: new Date(), cvv: "333", name: "pepe" } as Payment);
-    }).toThrow(Error);
+    }).toThrow(PurchaseException);
   });
 
   test('purchaseMoreItemsThanStockTest', () => {
@@ -342,7 +343,7 @@ describe('MercadoLibreServiceTest', () => {
 
     expect(() => {
       mercadoLibreService.purchase(buyer.id, { cardNumber: "3333", expirationDate: new Date(), cvv: "333", name: "pepe" } as Payment);
-    }).toThrow(Error);
+    }).toThrow(PurchaseException);
   });
 
   test('addQuestionTest', () => {
@@ -368,7 +369,7 @@ describe('MercadoLibreServiceTest', () => {
 
     expect(() => {
       mercadoLibreService.addQuestion(user.id, p1.id, "question?");
-    }).toThrow(Error);
+    }).toThrow(QuestionException);
   });
 
   test('addAnswerTest', () => {
@@ -399,7 +400,7 @@ describe('MercadoLibreServiceTest', () => {
 
     expect(() => {
       mercadoLibreService.addAnswer(user2.id, p1.id, question.id, "answer");
-    }).toThrow(Error);
+    }).toThrow(QuestionException);
   });
 
   test('addAnswerQuestionNotFoundTest', () => {
@@ -411,7 +412,7 @@ describe('MercadoLibreServiceTest', () => {
 
     expect(() => {
       mercadoLibreService.addAnswer(user2.id, p1.id, "q_1", "answer");
-    }).toThrow(Error);
+    }).toThrow(QuestionException);
   });
 
   test('getRelatedProductsTest', () => {
@@ -423,7 +424,7 @@ describe('MercadoLibreServiceTest', () => {
     const mercadoLibreService = initSystem();
     expect(() => {
       mercadoLibreService.getRelatedProducts("p_90000");
-    }).toThrow(Error);
+    }).toThrow(ProductException);
   });
 
   test('getAllProductsTest', () => {
