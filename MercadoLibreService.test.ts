@@ -3,11 +3,8 @@ import { describe, test, expect } from '@jest/globals';
 import { DraftNewUser, DraftProduct } from './draft.js';
 import MercadoLibreService from './MercadoLibreService.js';
 import { Category, Characteristic, Payment, Shipping } from './model.js';
-import initSystem from './data/InitSistem.js';
+import initSystem from './InitSystem.js';
 
-// import { initSystem } from './data/initSystem';
-
-// Funciones de ayuda (Asumiendo que usas interfaces y objetos literales)
 const getDraftNewUser = (name: string): DraftNewUser => {
   return {
     name,

@@ -1,12 +1,18 @@
 {
-  "name": "mercadolibre-model-js",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@unq-ui/mercadolibre-model-js",
+  "version": "1.0.1",
+  "description": "Mercadolibre model for the UI course",
   "license": "ISC",
-  "author": "",
+  "author": "Juan Pablo Mottesi <juannpm159@gmail.com> (https://github.com/juanmottesi)",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "keywords": [
+    "unq",
+    "uis",
+    "instagram",
+    "model"
+  ],
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",

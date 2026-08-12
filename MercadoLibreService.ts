@@ -1,4 +1,4 @@
-import { get as getDistance } from 'fast-levenshtein';
+import levenshtein from 'fast-levenshtein';
 
 import { DraftNewUser, DraftProduct } from "./draft.js";
 import IdGenerator from "./IdGenerator.js";
@@ -209,7 +209,7 @@ class MercadoLibreService {
   getRelatedProducts(idProduct: string): Product[] {
     const product = this.getProduct(idProduct)
     const relatedProducts = this.products.filter(currentProduct => {
-      return getDistance(currentProduct.title, product.title) < 3 && currentProduct.id !== product.id;
+      return levenshtein.get(currentProduct.title, product.title) < 3 && currentProduct.id !== product.id;
     });
     return relatedProducts.slice(0, 10)
   }

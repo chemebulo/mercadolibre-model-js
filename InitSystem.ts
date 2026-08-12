@@ -1,11 +1,11 @@
 import Rand from 'rand-seed';
 
-import { Payment } from '../model.js';
-import allComments from './comments.js';
-import MercadoLibreService from '../MercadoLibreService.js';
-import allUsers from './users.js';
-import allProduct from './products.js';
-import { DraftProduct } from '../draft.js';
+import { Payment } from './model.js';
+import allComments from './data/comments.js';
+import MercadoLibreService from './MercadoLibreService.js';
+import allUsers from './data/users.js';
+import allProduct from './data/products.js';
+import { DraftProduct } from './draft.js';
 
 const rand = new Rand('mercadolibre-model');
 
