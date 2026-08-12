@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext", // Importante para usar ES Modules
+    "moduleResolution": "NodeNext",
+    "declaration": true, // ¡Clave! Genera los archivos para el autocompletado de los alumnos
+    "outDir": "./dist", // Carpeta donde se guardará el código final
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
+}
