@@ -1,4 +1,4 @@
-# Instagram Model JS Documentation
+# Mercado Libre Model JS Documentation
 
 ## How to install
 
