@@ -115,8 +115,7 @@ const addPurchases = (mercadoLibreService: MercadoLibreService) => {
         mercadoLibreService.updateItemCart(user.id, product.id, amount)
       }
     })
-
-    if(randomNumber(rand, 0, 1) > 0.5) {
+    if (rand.next() > 0.5) {
       mercadoLibreService.purchase(user.id, getPayment())
     }
   })
