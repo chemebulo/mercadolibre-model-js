@@ -158,21 +158,30 @@ describe('MercadoLibreServiceTest', () => {
     const product = mercadoLibreService.addProduct(registerUser.id, getDraftProduct("product"));
 
     expect(mercadoLibreService.products.length).toBe(1);
-    mercadoLibreService.editProduct(registerUser.id, product.id, getDraftProduct("product2"));
+
+    const updatedDraft = getDraftProduct("product2");
+    updatedDraft.price = 50.0;
+
+    mercadoLibreService.editProduct(registerUser.id, product.id, updatedDraft);
+
     expect(mercadoLibreService.products.length).toBe(1);
-    expect(product.title).toBe("product2"); // Ajusta según el nombre real de la propiedad
+    expect(product.title).toBe("product2");
+    expect(product.price).toBe(50.0);
   });
 
   test('editProductNotOwnerTest', () => {
     const mercadoLibreService = new MercadoLibreService();
-    const registerUser = mercadoLibreService.registerNewUser(getDraftNewUser("example"));
-    const anotherUser = mercadoLibreService.registerNewUser(getDraftNewUser("user"));
-    const product = mercadoLibreService.addProduct(registerUser.id, getDraftProduct("product"));
+    const owner = mercadoLibreService.registerNewUser(getDraftNewUser("owner"));
+    const anotherUser = mercadoLibreService.registerNewUser(getDraftNewUser("anotherUser"));
+    const product = mercadoLibreService.addProduct(owner.id, getDraftProduct("product"));
 
     expect(mercadoLibreService.products.length).toBe(1);
+
     expect(() => {
-      mercadoLibreService.editProduct(anotherUser.id, product.id, getDraftProduct("product2"));
+      mercadoLibreService.editProduct(anotherUser.id, product.id, getDraftProduct("product_anotherUser"));
     }).toThrow(ProductException);
+
+    expect(product.title).toBe("product");
   });
 
   test('getProductTest', () => {
@@ -236,19 +245,33 @@ describe('MercadoLibreServiceTest', () => {
   test('searchProductTest', () => {
     const mercadoLibreService = new MercadoLibreService();
     const user = mercadoLibreService.registerNewUser(getDraftNewUser("example"));
-    mercadoLibreService.addProduct(user.id, getDraftProduct("product"));
-    mercadoLibreService.addProduct(user.id, getDraftProduct("product2", "c_2"));
-    mercadoLibreService.addProduct(user.id, getDraftProduct("product3"));
-    mercadoLibreService.addProduct(user.id, getDraftProduct("pepe", "c_2"));
 
-    let result = mercadoLibreService.searchProducts("product", 1);
-    expect(result.items.length).toBe(3);
+    mercadoLibreService.addProduct(user.id, getDraftProduct("Zapatilla Deportiva Nike"));
+    mercadoLibreService.addProduct(user.id, { ...getDraftProduct("Remera"), description: "Remera nike de algodon" });
+    mercadoLibreService.addProduct(user.id, getDraftProduct("Gorra", "c_2"));
 
-    result = mercadoLibreService.searchProducts("description", 1);
-    expect(result.items.length).toBe(4);
+    const productCharacteristic = getDraftProduct("Botella");
+    productCharacteristic.characteristics = [{ name: "Color", value: "Rojo" }];
+    mercadoLibreService.addProduct(user.id, productCharacteristic);
 
-    result = mercadoLibreService.searchProducts("pepe", 1);
+    let result = mercadoLibreService.searchProducts("   ZaPaTiLLa   ", 1);
     expect(result.items.length).toBe(1);
+    expect(result.items[0].title).toBe("Zapatilla Deportiva Nike");
+
+    result = mercadoLibreService.searchProducts("nike zapatilla", 1);
+    expect(result.items.length).toBe(1);
+    expect(result.items[0].title).toBe("Zapatilla Deportiva Nike");
+
+    result = mercadoLibreService.searchProducts("algodon", 1);
+    expect(result.items.length).toBe(1);
+    expect(result.items[0].title).toBe("Remera");
+
+    result = mercadoLibreService.searchProducts("rojo", 1);
+    expect(result.items.length).toBe(1);
+    expect(result.items[0].title).toBe("Botella");
+
+    result = mercadoLibreService.searchProducts("   ", 1);
+    expect(result.items.length).toBe(4);
   });
 
   test('updateItemCartTest', () => {
