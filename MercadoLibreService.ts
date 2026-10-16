@@ -172,6 +172,7 @@ class MercadoLibreService {
     product.description = draftProduct.description;
     product.images = draftProduct.images
     product.stock = draftProduct.stock
+    product.price = draftProduct.price
     product.shipping = draftProduct.shipping
     product.characteristics = draftProduct.characteristics
     product.category = draftProduct.category
@@ -244,7 +245,25 @@ class MercadoLibreService {
    * @return A page of products.
    */
   searchProducts(text: string, pageNumber: number): Page<Product> {
-    const filteredProducts = this.products.filter(product => product.title.includes(text) || product.description.includes(text));
+    const searchTerms = text.toLowerCase().trim().split(/\s+/);
+
+    const filteredProducts = this.products.filter(product => {
+      const titleLower = product.title.toLowerCase();
+      const descLower = product.description.toLowerCase();
+      const categoryLower = product.category.name.toLowerCase();
+
+      const characteristicsLower = product.characteristics
+          .map(char => char.value.toLowerCase())
+          .join(' ');
+
+      return searchTerms.every(term =>
+          titleLower.includes(term) ||
+          descLower.includes(term) ||
+          categoryLower.includes(term) ||
+          characteristicsLower.includes(term)
+      );
+    });
+
     return getPage(filteredProducts, pageNumber);
   }
 
